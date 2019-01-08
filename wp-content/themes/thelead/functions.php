@@ -167,7 +167,7 @@ require get_template_directory() . '/inc/customizer.php';
 	        /**
 	        * @var  array  $postTypes  An array of public custom post types, plus the standard "post" and "page" - add the custom types you want to include here
 	        */
-	        var $postTypes = array( "page", "days" );
+	        var $postTypes = array( "page", "days", "partners", "speakers" );
 	        /**
 	        * @var  array  $customFields  Defines the custom fields available
 	        */
@@ -297,7 +297,72 @@ require get_template_directory() . '/inc/customizer.php';
 	                "scope"         =>   array( "days" ),
 	                "capability"    => "edit_posts"
 	            ),
-
+							//Speakers fields
+							array(
+								"name" => "speakers_image",
+								"title" => "Speaker image",
+								"description" => "Select speaker image",
+								"type" => "media",
+								"scope" => array("speakers"),
+								"capability" => "edit_posts"
+							),
+							array(
+									"name"          => "speakers_name",
+									"title"         => "Name",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "speakers" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "speakers_job",
+									"title"         => "Job",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "speakers" ),
+									"capability"    => "edit_posts"
+							),
+							//Partners fields
+							array(
+									"name"          => "partners_title",
+									"title"         => "Title",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "partners" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "partners_content",
+									"title"         => "Content",
+									"description"   => "",
+									"type"          =>   "textarea",
+									"scope"         =>   array( "partners" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+								"name" => "partners_image",
+								"title" => "Partner image",
+								"description" => "Select partner image",
+								"type" => "media",
+								"scope" => array("partners"),
+								"capability" => "edit_posts"
+							),
+							array(
+									"name"          => "partners_button_text",
+									"title"         => "Button text",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "partners" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "partners_button_url",
+									"title"         => "Url",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "partners" ),
+									"capability"    => "edit_posts"
+							),
 	        );
 	        /**
 	        * PHP 4 Compatible Constructor
@@ -447,6 +512,8 @@ require get_template_directory() . '/inc/customizer.php';
 	add_action( 'init', function() {
     remove_post_type_support( 'days', 'editor' );
     remove_post_type_support( 'page', 'editor' );
+    remove_post_type_support( 'partners', 'editor' );
+    remove_post_type_support( 'speakers', 'editor' );
 }, 99);
 
 //callback function for image uploading
