@@ -9,16 +9,21 @@
 
 ?>
 <?php
-//Upper block(used Customizer api)
-        if(get_theme_mod('when')): echo nl2br(esc_html(get_theme_mod('when'))); else: echo '21 march - 14 april 2019'; endif;
-        if(get_theme_mod('where')): echo nl2br(esc_html(get_theme_mod('where'))); else: echo 'Vierick Campus Ghent'; endif;
-        if(get_theme_mod('what')): echo nl2br(esc_html(get_theme_mod('what'))); else: echo '5 day coyrse'; endif;
-//Days block
-        if(get_theme_mod('title')): echo nl2br(esc_html(get_theme_mod('title'))); else: echo 'The programme'; endif;
-        if(get_theme_mod('text')): echo nl2br(esc_html(get_theme_mod('text'))); else: echo 'De impact van '; endif;
-        //button
-        if(get_theme_mod('button_title')): echo nl2br(esc_html(get_theme_mod('button_title'))); else: echo 'VIEW FULL SHELUDE'; endif;
-        if(get_theme_mod('button_url')): echo nl2br(esc_html(get_theme_mod('button_url'))); else: echo '/'; endif;
+//getting id of current page
+global $post;
+$page_id = $post-> ID;
+//header block
+echo (get_post_meta( $page_id, $key = '_ttlh_header_text', $single = true ));
+//getting header image
+$img = get_post_meta($page_id,$key = 'header-image', $single = true );
+//www block
+echo (get_post_meta( $page_id, $key = '_ttlh_when', $single = true ));
+echo (get_post_meta( $page_id, $key = '_ttlh_where', $single = true ));
+echo (get_post_meta( $page_id, $key = '_ttlh_what', $single = true ));
+echo (get_post_meta( $page_id, $key = '_ttlh_button_text', $single = true ));
+echo (get_post_meta( $page_id, $key = '_ttlh_button_url', $single = true ));
+
+        //query for custom post type Days
         $days_args = array(
           'post_type' => 'days',
           'order' => 'DESC',
@@ -28,14 +33,14 @@
         if($days_query->have_posts()) : while($days_query->have_posts()) : $days_query->the_post();
         $posts = $days_query->posts;
         foreach($posts as $post){
-          the_title();
-          the_content();
           //This is made from custom fields(for post type - days)
-          //var_dump(get_post_meta( $post->ID, $key = '_mcf_block-of-text', $single = false ));
-          echo (get_post_meta( $post->ID, $key = '_mcf_block-of-text', $single = true ));
+          echo (get_post_meta( $post->ID, $key = '_ttlh_title', $single = true ));
+          echo (get_post_meta( $post->ID, $key = '_ttlh_subtitle', $single = true ));
+          echo (get_post_meta( $post->ID, $key = '_ttlh_content', $single = true ));
+          echo (get_post_meta( $post->ID, $key = '_ttlh_days_button_text', $single = true ));
+          echo (get_post_meta( $post->ID, $key = '_ttlh_days_button_url', $single = true ));
         };
       endwhile; endif;
-      //This is made from custom fields(for page)
-      //var_dump(get_post_meta( 7, $key = '_mcf_block-of-text', $single = false ));
-      echo (get_post_meta( 7, $key = '_mcf_block-of-text', $single = true ));
+
 ?>
+<img src="<?php echo $img ?>">

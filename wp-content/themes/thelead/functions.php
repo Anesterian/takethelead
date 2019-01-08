@@ -125,6 +125,9 @@ function thelead_scripts() {
 	wp_enqueue_script( 'thelead-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
 
 	wp_enqueue_script( 'thelead-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
+	wp_enqueue_script('jquery');
+wp_enqueue_script('media-upload');
+wp_enqueue_script('thickbox');
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -152,161 +155,15 @@ require get_template_directory() . '/inc/template-functions.php';
  */
 require get_template_directory() . '/inc/customizer.php';
 
-/**
- * Load Jetpack compatibility file.
- */
-if ( defined( 'JETPACK__VERSION' ) ) {
-	require get_template_directory() . '/inc/jetpack.php';
-}
-add_action('customize_register', 'takethelead_customize_register');
 
-function takethelead_customize_register($wp_customize) {
-	//Customizer block date
-    $wp_customize->add_section('date', array(
-        'title' => 'Date block',
-        'priority' => 1,
-    ));
-		$when = 'when';
-		$wp_customize->add_setting($when, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
+	//Custom fields for header
+	if ( !class_exists('TakeTheLeadHeaderCustomFields') ) {
 
-		$wp_customize->add_control($when, array(
-				'section' => 'date',
-				'type' => 'text',
-				'label' => 'Enter date',
-		));
-		$wp_customize->selective_refresh->add_partial($when, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($when) {
-						return nl2br(esc_html(get_theme_mod($when)));
-				}
-		));
-		$where = 'where';
-		$wp_customize->add_setting($where, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($where, array(
-				'section' => 'date',
-				'type' => 'text',
-				'label' => 'Enter address',
-		));
-		$wp_customize->selective_refresh->add_partial($where, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($where) {
-						return nl2br(esc_html(get_theme_mod($where)));
-				}
-		));
-		$what = 'what';
-		$wp_customize->add_setting($what, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($what, array(
-				'section' => 'date',
-				'type' => 'text',
-				'label' => 'Enter subject',
-		));
-		$wp_customize->selective_refresh->add_partial($what, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($what) {
-						return nl2br(esc_html(get_theme_mod($what)));
-				}
-		));
-		//text block
-		$wp_customize->add_section('days', array(
-				'title' => 'Days block',
-				'priority' => 1,
-		));
-		$title = 'title';
-		$wp_customize->add_setting($title, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($title, array(
-				'section' => 'days',
-				'type' => 'text',
-				'label' => 'Enter title',
-		));
-		$wp_customize->selective_refresh->add_partial($title, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($title) {
-						return nl2br(esc_html(get_theme_mod($title)));
-				}
-		));
-		$text = 'text';
-		$wp_customize->add_setting($text, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($text, array(
-				'section' => 'days',
-				'type' => 'textarea',
-				'label' => 'Enter text',
-		));
-		$wp_customize->selective_refresh->add_partial($text, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($text) {
-						return nl2br(esc_html(get_theme_mod($text)));
-				}
-		));
-		$button_title = 'button_title';
-		$wp_customize->add_setting($button_title, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($button_title, array(
-				'section' => 'days',
-				'type' => 'text',
-				'label' => 'Enter title for button',
-		));
-		$wp_customize->selective_refresh->add_partial($button_title, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($button_title) {
-						return nl2br(esc_html(get_theme_mod($button_title)));
-				}
-		));
-		$button_url = 'button_url';
-		$wp_customize->add_setting($button_url, array(
-				'default' => '',
-				'sanitize_callback' => 'sanitize_textarea_field',
-				'transport' => 'postMessage'
-		));
-
-		$wp_customize->add_control($button_url, array(
-				'section' => 'days',
-				'type' => 'text',
-				'label' => 'Enter button url',
-		));
-		$wp_customize->selective_refresh->add_partial($button_url, array(
-				'selector' => '.body',
-				'render_callback' => function() use ($button_url) {
-						return nl2br(esc_html(get_theme_mod($button_url)));
-				}
-		));
-	}
-
-	//Tesing custom fields
-	if ( !class_exists('myCustomFields') ) {
-
-	    class myCustomFields {
+	    class TakeTheLeadHeaderCustomFields {
 	        /**
 	        * @var  string  $prefix  The prefix for storing custom fields in the postmeta table
 	        */
-	        var $prefix = '_mcf_';
+	        var $prefix = '_ttlh_';
 	        /**
 	        * @var  array  $postTypes  An array of public custom post types, plus the standard "post" and "page" - add the custom types you want to include here
 	        */
@@ -315,35 +172,137 @@ function takethelead_customize_register($wp_customize) {
 	        * @var  array  $customFields  Defines the custom fields available
 	        */
 	        var $customFields = array(
+						//header block
+	            // array(
+	            //     "name"          => "header_imagee",
+	            //     "title"         => "A url for header image",
+	            //     "description"   => "",
+	            //     "type"          => "url",
+	            //     "scope"         =>   array( "page"),
+	            //     "capability"    => "edit_pages"
+	            // ),
+							array(
+								"name" => "header_image",
+								"title" => "Header image",
+								"description" => "Select header image",
+								"type" => "media",
+								"scope" => array("page"),
+								"capability" => "edit_pages"
+							),
+							array(
+									"name"          => "header_text",
+									"title"         => "Header text",
+									"description"   => "Enter header text",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							//WWW block
+							array(
+									"name"          => "when",
+									"title"         => "When",
+									"description"   => "Enter text for field - when",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							array(
+									"name"          => "where",
+									"title"         => "Where",
+									"description"   => "Enter text for field - where",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							array(
+									"name"          => "what",
+									"title"         => "What",
+									"description"   => "Enter text for field - what",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							//main block
+							array(
+									"name"          => "main_title",
+									"title"         => "Main title",
+									"description"   => "",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							array(
+									"name"          => "main_text",
+									"title"         => "Main text",
+									"description"   => "",
+									"type"          => "textarea",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							//main button
+							array(
+									"name"          => "button_text",
+									"title"         => "Button text",
+									"description"   => "",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							array(
+									"name"          => "button_url",
+									"title"         => "Button url",
+									"description"   => "",
+									"type"          => "text",
+									"scope"         =>   array( "page"),
+									"capability"    => "edit_pages"
+							),
+							//Days fields
+							array(
+									"name"          => "title",
+									"title"         => "Title",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "days" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "subtitle",
+									"title"         => "Subtitle",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "days" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "content",
+									"title"         => "Content",
+									"description"   => "",
+									"type"          =>   "textarea",
+									"scope"         =>   array( "days" ),
+									"capability"    => "edit_posts"
+							),
+							array(
+									"name"          => "days_button_text",
+									"title"         => "Button text",
+									"description"   => "",
+									"type"          =>   "text",
+									"scope"         =>   array( "days" ),
+									"capability"    => "edit_posts"
+							),
 	            array(
-	                "name"          => "block-of-text",
-	                "title"         => "A block of text",
-	                "description"   => "",
-	                "type"          => "textarea",
-	                "scope"         =>   array( "page", "days" ),
-	                "capability"    => "edit_pages"
-	            ),
-	            array(
-	                "name"          => "button_urld",
-	                "title"         => "A button url",
+	                "name"          => "days_button_url",
+	                "title"         => "Button url",
 	                "description"   => "",
 	                "type"          =>   "text",
 	                "scope"         =>   array( "days" ),
 	                "capability"    => "edit_posts"
 	            ),
-	            array(
-	                "name"          => "checkbox",
-	                "title"         => "Checkbox ",
-	                "description"   => "",
-	                "type"          => "checkbox",
-	                "scope"         =>   array( "days" ),
-	                "capability"    => "manage_options"
-	            )
+
 	        );
 	        /**
 	        * PHP 4 Compatible Constructor
 	        */
-	        function myCustomFields() { $this->__construct(); }
+	        function TakeTheLeadHeaderCustomFields() { $this->__construct(); }
 	        /**
 	        * PHP 5 Constructor
 	        */
@@ -369,7 +328,7 @@ function takethelead_customize_register($wp_customize) {
 	        function createCustomFields() {
 	            if ( function_exists( 'add_meta_box' ) ) {
 	                foreach ( $this->postTypes as $postType ) {
-	                    add_meta_box( 'my-custom-fields', 'Custom Fields', array( & $this, 'displayCustomFields' ), $postType, 'normal', 'high' );
+	                    add_meta_box( 'my-custom-fields', 'Header block', array( & $this, 'displayCustomFields' ), $postType, 'normal', 'high' );
 	                }
 	            }
 	        }
@@ -431,6 +390,11 @@ function takethelead_customize_register($wp_customize) {
 	                                    <?php }
 	                                    break;
 	                                }
+																	//media
+																	case "media":{
+																		image_upload($post);
+																		break;
+																	}
 	                                default: {
 	                                    // Plain text field
 	                                    echo '<label for="' . $this->prefix . $customField[ 'name' ] .'"><b>' . $customField[ 'title' ] . '</b></label>';
@@ -476,6 +440,58 @@ function takethelead_customize_register($wp_customize) {
 	} // End if class exists statement
 
 	// Instantiate the class
-	if ( class_exists('myCustomFields') ) {
-	    $myCustomFields_var = new myCustomFields();
+	if ( class_exists('TakeTheLeadHeaderCustomFields') ) {
+	    $TakeTheLeadHeaderCustomFields_var = new TakeTheLeadHeaderCustomFields();
 	}
+	//removing standart wordpress editor from post_type: days; page
+	add_action( 'init', function() {
+    remove_post_type_support( 'days', 'editor' );
+    remove_post_type_support( 'page', 'editor' );
+}, 99);
+
+//callback function for image uploading
+function image_upload($post){
+  $url = get_post_meta($post->ID, 'header-image', true); ?>
+  <input id="my_image_URL" name="my_image_URL" type="text"
+         value="<?php echo $url;?>" style="width:400px;" />
+  <input id="my_upl_button" type="button" value="Upload Image" /><br/>
+  <img src="<?php echo $url;?>" style="width:200px;" id="picsrc" />
+  <script>
+  jQuery(document).ready( function($) {
+    jQuery('#my_upl_button').click(function() {
+      window.send_to_editor = function(html) {
+        imgurl = jQuery(html).attr('src')
+        jQuery('#my_image_URL').val(imgurl);
+        jQuery('#picsrc').attr("src", imgurl);
+        tb_remove();
+      }
+
+      formfield = jQuery('#my_image_URL').attr('name');
+      tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true' );
+      return false;
+    }); // End on click
+  });
+  </script>
+<?php
+}
+
+add_action('save_post', function ($post_id) {
+  if (isset($_POST['my_image_URL'])){
+    update_post_meta($post_id, 'header-image', $_POST['my_image_URL']);
+  }
+});
+
+
+/*add_action(
+  'add_meta_boxes',
+  function(){
+    add_meta_box(
+      'header_image', // ID
+      'Header image', // Title
+      'image_upload', // Callback (Construct function)
+      'page', //screen (This adds metabox to all post types)
+      'normal' // Context
+    );
+ },
+ 9
+);*/
